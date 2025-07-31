@@ -6,12 +6,12 @@ const handleRegisterUser = async (req, res) => {
 
   try {
     if (!phone) {
-      return res.status(400).json({ message: 'Phone number is required' });
+      return res.status(400).json({success: false, message: 'Phone number is required' });
     }
     const existingUser = await User.findOne({ phone });
 
     if (existingUser) {
-      return res.status(400).json({ message: 'User already registered, please login' });
+      return res.status(400).json({ success: false,message: 'User already registered, please login' });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
@@ -25,9 +25,9 @@ const handleRegisterUser = async (req, res) => {
 
     console.log(`OTP sent to ${phone}: ${otp}`);
 
-    res.status(200).json({ newUser,message: 'OTP sent successfully' });
+    res.status(200).json({ success: true,newUser,message: 'OTP sent successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ success: false,message: err.message });
   }
 };
 
@@ -37,7 +37,7 @@ const verifyOtp = async (req, res) => {
     const user = await User.findOne({ otp });
 
     if (!user || user.otp !== otp || user.otpExpires < new Date()) {
-      return res.status(400).json({ message: 'Invalid or expired OTP' });
+      return res.status(400).json({success: false, message: 'Invalid or expired OTP' });
     }
 
     user.isVerified = true;
@@ -45,9 +45,9 @@ const verifyOtp = async (req, res) => {
     user.otpExpires = undefined;
     await user.save();
 
-    res.status(200).json({user, message: 'OTP verified successfully' });
+    res.status(200).json({success: true,user, message: 'OTP verified successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ success: false,message: err.message });
   }
 };
 
@@ -57,11 +57,11 @@ const login = async (req, res) => {
   try {
     const user = await User.findOne({ phone });
     if (!user) {
-      return res.status(401).json({ message: 'Invalid phone' });
+      return res.status(401).json({ success: false,message: 'Invalid phone' });
     }
-    res.status(200).json({ user, message: 'Login successful' });
+    res.status(200).json({ success: true,user, message: 'Login successful' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({success: false, message: err.message });
   }
 };
 
@@ -71,13 +71,13 @@ const updateProfile = async (req, res) => {
 
   try {
     if (!userId) {
-      return res.status(400).json({ message: 'User ID is required' });
+      return res.status(400).json({success: false, message: 'User ID is required' });
     }
 
     const user = await User.findById(userId);
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({success: false, message: 'User not found' });
     }
     if (name) user.name = name;
     if (email) user.email = email;
@@ -85,9 +85,9 @@ const updateProfile = async (req, res) => {
 
     await user.save();
 
-    res.status(200).json({ user, message: 'Profile updated successfully' });
+    res.status(200).json({ success: true,user, message: 'Profile updated successfully' });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({success: false, message: err.message });
   }
 };
 
@@ -97,20 +97,20 @@ const getProfile = async (req, res) => {
     const { userId } = req.body;
 
     if (!userId ) {
-      return res.status(400).json({ message: 'User ID  is required' });
+      return res.status(400).json({ success: false,message: 'User ID  is required' });
     }
 
     const user = await User.findById(userId);
      
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ success: false,message: 'User not found' });
     }
     const { otp, otpExpires, ...safeUserData } = user.toObject();
 
-    res.status(200).json({ user: safeUserData });
+    res.status(200).json({ success: true,user: safeUserData });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ success: false,message: error.message });
   }
 };
 
