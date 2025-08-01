@@ -1,9 +1,8 @@
 const User = require('../model/userModel');
 const sendAuthOTP = require('../twilio/userAuth');
-const Transaction = require('../model/tranctionModel');
 
 const handleRegisterUser = async (req, res) => {
-  const { phone,name,email,location,gender,age,merchantID } = req.body;
+  const { phone,name,email,location,gender,age,merchantID,customerID } = req.body;
 
   try {
     if (!phone) {
@@ -18,7 +17,7 @@ const handleRegisterUser = async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000); 
 
-    const newUser = new User({ phone, otp, otpExpires,name,email,location,merchantID,age,gender });
+    const newUser = new User({ phone, otp, otpExpires,name,email,location,merchantID,age,gender,customerID });
 
     await sendAuthOTP(newUser.phone, otp );
 

@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema({
   amount:       { type: Number, default: 5000 },
   gender:       { type: String },
   age:          { type: String },
+  customerID:   { type: String, unique: true, required: true },
   merchantID:   { type: String, unique: true, required: true },
   name:         { type: String },
   location:     { type: String },
