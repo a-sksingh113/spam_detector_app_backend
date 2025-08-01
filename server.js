@@ -14,8 +14,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const authRoutes = require("./route/userRoute");
+const tranctionRoute = require('./route/tranctionRoute')
 
 app.use("/api/user", authRoutes);
+app.use("/api/tranction", tranctionRoute);
 
 
 
