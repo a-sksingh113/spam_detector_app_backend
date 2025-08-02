@@ -4,8 +4,8 @@ const router = express.Router();
 
 
 router.post('/pay', handlePay);
-router.get('/check-balance', checkBalance);
-router.get('/transactions-history', getTransactionHistory);
+router.post('/check-balance', checkBalance);
+router.post('/transactions-history', getTransactionHistory);
 
 
 module.exports = router;
