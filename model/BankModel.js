@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const BankSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   amount: { type: Number },
+  accountNumber: { type: Number },
   cardType: { type: Number },
   transactionType: { type: Number },
   deviceType: { type: Number },

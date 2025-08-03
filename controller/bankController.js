@@ -123,6 +123,7 @@ const createTransaction = async (req, res) => {
   try {
     const {
       userId,
+      accountNumber,
       amount,
       cardType,
       transactionType,
@@ -172,7 +173,7 @@ const createTransaction = async (req, res) => {
 
     console.log(" User found:", user._id, "Merchant ID:", user.merchantID);
 
-    const flaggedMerchantIds = ["M857378720", "M480139044", "M1198415165"];
+    const flaggedMerchantIds = ["M857378720","M348875670","M2080407379"];
     const overrideValues = [
       406, -2.312, 1.951, -1.609, 3.997, -0.522, -1.426, -2.537, 1.391, -2.77,
       -2.772, 3.202, -2.899, -0.595, -4.289, 0.389, -1.14, -2.83, -0.016, 0.416,
