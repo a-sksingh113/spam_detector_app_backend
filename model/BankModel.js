@@ -1,0 +1,37 @@
+const mongoose = require("mongoose");
+
+const BankSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  amount: { type: Number },
+  cardType: { type: Number },
+  transactionType: { type: Number },
+  deviceType: { type: Number },
+  merchantCategory: { type: Number },
+  merchantRiskLevel: { type: Number },
+  customerTenure: { type: Number },
+  customerAge: { type: Number },
+  isInternational: { type: Number },
+  distanceFromHome: { type: Number },
+  timeOfDay: { type: Number },
+  dayOfWeek: { type: Number },
+  isWeekend: { type: Number },
+  isHoliday: { type: Number },
+  txCountLastHour: { type: Number },
+  amountDeviation: { type: Number },
+  velocity: { type: Number },
+  consecutiveDeclines: { type: Number },
+  failedLoginsToday: { type: Number },
+  changedDevice: { type: Number },
+  changedLocation: { type: Number },
+  previouslyFlagged: { type: Number },
+  minutesSinceLastTx: { type: Number },
+  customerRiskScore: { type: Number },
+  merchantNameFreq: { type: Number },
+  patternMatch: { type: Number },
+  hasEmvChip: { type: Number },
+  otpUsed: { type: Number },
+  isFirstTimeMerchant: { type: Number },
+  time: { type: Number },
+});
+
+module.exports = mongoose.model("Bank", BankSchema);
