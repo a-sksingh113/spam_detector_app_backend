@@ -2,6 +2,7 @@ const User = require("../model/userModel");
 const Transaction = require("../model/tranctionModel");
 const Bank = require("../model/BankModel");
 const axios = require("axios");
+const Log = require("../model/logModel");
 
 const handlePay = async (req, res) => {
   try {
@@ -101,13 +102,22 @@ const handlePay = async (req, res) => {
     const result = aiResponse.data?.prediction;
     if (result === "Fraud") {
       console.log(" AI Model flagged transaction as Fraud");
+      await Log.create({
+        userId: user._id,
+        userName: user.name,
+        amount,
+        merchantID,
+        merchantName: merchant.name,
+        type: "fraud",
+        message: "Transaction flagged by AI model. Tranction Blocked 🚫",
+      });
       return res.status(403).json({
         success: false,
         message: "Transaction flagged by AI model.",
       });
     }
 
-    // Proceed with transaction
+
     user.amount -= amount;
     merchant.amount += amount;
     await user.save();
@@ -120,6 +130,16 @@ const handlePay = async (req, res) => {
     });
 
     console.log(` ₹${amount} transferred from ${user._id} to ${merchant._id}`);
+
+    await Log.create({
+      userId: user._id,
+      userName: user.name,
+      amount,
+      merchantID,
+      merchantName: merchant.name,
+      type: "success",
+      message: "Transaction completed successfully.",
+    });
 
     return res.status(200).json({
       success: true,
@@ -134,54 +154,6 @@ const handlePay = async (req, res) => {
     });
   }
 };
-
-// const handlePay = async (req, res) => {
-//   try {
-//     const { userId, merchantID, amount } = req.body;
-//     if (!userId || !merchantID || amount == null) {
-//       return res.status(400).json({
-//         success: false,
-//         message: 'merchantID and amount are required'
-//       });
-//     }
-
-//     const user = await User.findById( userId );
-//     const merchant = await User.findOne({ merchantID });
-//     if (!user || !merchant) {
-//       return res.status(404).json({
-//         success: false,
-//         message: 'User or Merchant not found'
-//       });
-//     }
-
-//     if (user.amount < amount) {
-//       return res.status(400).json({
-//         success: false,
-//         message: 'Insufficient balance'
-//       });
-//     }
-
-//     user.amount  -= amount;
-//     merchant.amount  += amount;
-//     await user.save();
-//     await merchant.save();
-
-//     await Transaction.create({
-//       sender:   user._id,
-//       receiver: merchant._id,
-//       amount
-//     });
-
-//     return res.status(200).json({
-//       success: true,
-//       message: `₹${amount} transferred successfully`,
-//       userBalance: user.amount,
-//     });
-
-//   } catch (err) {
-//     return res.status(500).json({ success: false, message: err.message });
-//   }
-// };
 
 const checkBalance = async (req, res) => {
   try {

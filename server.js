@@ -16,10 +16,12 @@ app.use(express.urlencoded({ extended: false }));
 const authRoutes = require("./route/userRoute");
 const tranctionRoute = require('./route/tranctionRoute');
 const createTransaction = require('./route/bankRoute');
+const userDetails = require('./route/adminRoute');
+const userActivityLogRoute  = require('./route/logRoute')
 
 app.use("/api/user", authRoutes);
 app.use("/api/tranction", tranctionRoute,createTransaction);
-
+app.use("/api/admin", userDetails,userActivityLogRoute);
 
 app.get("/", (req, res) => res.send("API is running..."));
 
