@@ -109,7 +109,7 @@ const handlePay = async (req, res) => {
         merchantID,
         merchantName: merchant.name,
         type: "fraud",
-        message: "Transaction flagged by AI model. Tranction Blocked 🚫",
+        message: "Transaction flagged by AI model. Transaction Blocked 🚫",
       });
       return res.status(403).json({
         success: false,
