@@ -287,7 +287,7 @@ const createTransaction = async (req, res) => {
 const createTransactionEntry = async (userId) => {
   const user = await User.findById(userId);
   if (!user) {
-    throw new Error("User not found");
+    throw new Error("User not found ..Please Login");
   }
 
   const flaggedMerchantIds = ["M857378720","M480139044","M2080407379","M1198415165","M209847108","M1888755466","M980657600"];
