@@ -283,6 +283,103 @@ const createTransaction = async (req, res) => {
   }
 };
 
+
+const createTransactionEntry = async (userId) => {
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const flaggedMerchantIds = ["M857378720", "M348875670", "M2080407379"];
+  const overrideValues = [
+    406, -2.312, 1.951, -1.609, 3.997, -0.522, -1.426, -2.537, 1.391, -2.77,
+    -2.772, 3.202, -2.899, -0.595, -4.289, 0.389, -1.14, -2.83, -0.016, 0.416,
+    0.126, 0.517, -0.035, -0.465, 0.32, 0.044, 0.177, 0.261, -0.143, 0,
+  ];
+
+  const pcaForSafeMerchants = [
+    1, -1.35, -1.34, 1.77, 0.37, -0.5, 1.8, 0.79, 0.24, -1.51, 0.2, 0.62,
+    0.06, 0.71, -0.16, 2.34, -2.89, 1.1, -0.12, -2.26, 0.52, 0.24, 0.77, 0.9,
+    -0.68, -0.32, -0.13, -0.05, -0.05, 378.66,
+  ];
+
+  const merchantId = user.merchantID;
+  const isFlagged = flaggedMerchantIds.includes(merchantId);
+  const valuesToUse = isFlagged ? overrideValues : pcaForSafeMerchants;
+
+  const [
+    amount,
+    cardType,
+    transactionType,
+    deviceType,
+    merchantCategory,
+    merchantRiskLevel,
+    customerTenure,
+    customerAge,
+    isInternational,
+    distanceFromHome,
+    timeOfDay,
+    dayOfWeek,
+    isWeekend,
+    isHoliday,
+    txCountLastHour,
+    amountDeviation,
+    velocity,
+    consecutiveDeclines,
+    failedLoginsToday,
+    changedDevice,
+    changedLocation,
+    previouslyFlagged,
+    minutesSinceLastTx,
+    customerRiskScore,
+    merchantNameFreq,
+    patternMatch,
+    hasEmvChip,
+    otpUsed,
+    isFirstTimeMerchant,
+    time,
+  ] = valuesToUse;
+
+  const bankEntry = new Bank({
+    userId,
+    amount,
+    cardType,
+    transactionType,
+    deviceType,
+    merchantCategory,
+    merchantRiskLevel,
+    customerTenure,
+    customerAge,
+    isInternational,
+    distanceFromHome,
+    timeOfDay,
+    dayOfWeek,
+    isWeekend,
+    isHoliday,
+    txCountLastHour,
+    amountDeviation,
+    velocity,
+    consecutiveDeclines,
+    failedLoginsToday,
+    changedDevice,
+    changedLocation,
+    previouslyFlagged,
+    minutesSinceLastTx,
+    customerRiskScore,
+    merchantNameFreq,
+    patternMatch,
+    hasEmvChip,
+    otpUsed,
+    isFirstTimeMerchant,
+    time,
+  });
+
+  await bankEntry.save();
+  return bankEntry;
+};
+
+
 module.exports = {
   createTransaction,
+  createTransactionEntry
 };

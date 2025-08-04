@@ -1,5 +1,6 @@
 const User = require("../model/userModel");
 const sendAuthOTP = require("../twilio/userAuth");
+const {  createTransactionEntry } = require("./bankController");
 
 const handleRegisterUser = async (req, res) => {
   const { phone, name, email, location, gender, age, merchantID, customerID } =
@@ -14,13 +15,32 @@ const handleRegisterUser = async (req, res) => {
     const existingUser = await User.findOne({ phone });
 
     if (existingUser) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "User already registered, please login",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "User Phone already registered, please login",
+      });
     }
+
+  if (merchantID) {
+      const merchantExists = await User.findOne({ merchantID });
+      if (merchantExists) {
+        return res.status(400).json({
+          success: false,
+          message: "Merchant ID already in use",
+        });
+      }
+    }
+
+      if (customerID) {
+      const customerExists = await User.findOne({ customerID });
+      if (customerExists) {
+        return res.status(400).json({
+          success: false,
+          message: "customer ID already in use",
+        });
+      }
+    }
+
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
@@ -38,9 +58,11 @@ const handleRegisterUser = async (req, res) => {
       customerID,
     });
 
-    await sendAuthOTP(newUser.phone, otp);
-
+    
+    
     await newUser.save();
+    await sendAuthOTP(newUser.phone, otp);
+    await createTransactionEntry(newUser._id);
 
     console.log(`OTP sent to ${phone}: ${otp}`);
 
