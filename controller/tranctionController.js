@@ -91,7 +91,7 @@ const handlePay = async (req, res) => {
     console.log(" PCA Vector Prepared:", merchantPCA);
 
     const aiResponse = await axios.post(
-      "https://model2.satishdev.me/predict2",
+      "https://model2.pixbit.me/predict2",
       {
         features: merchantPCA.map(Number),
       }
